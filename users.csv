@@ -1,0 +1,21 @@
+id,name,email,role,createdAt,updatedAt
+1,Rodrigo Silva,rodrigo@example.com,admin,2024-06-01T08:00:00Z,2024-06-01T08:00:00Z
+2,Ana Costa,ana.costa@example.com,user,2024-06-01T08:05:00Z,2024-06-01T08:05:00Z
+3,Caio Martins,caio.martins@example.com,editor,2024-06-01T08:10:00Z,2024-06-01T08:10:00Z
+4,Juliana Lopes,juliana.lopes@example.com,user,2024-06-01T08:15:00Z,2024-06-01T08:15:00Z
+5,Fernando Souza,fernando.souza@example.com,moderator,2024-06-01T08:20:00Z,2024-06-01T08:20:00Z
+6,Mariana Lima,mariana.lima@example.com,user,2024-06-01T08:25:00Z,2024-06-01T08:25:00Z
+7,Lucas Pereira,lucas.pereira@example.com,admin,2024-06-01T08:30:00Z,2024-06-01T08:30:00Z
+8,Patricia Gomes,patricia.gomes@example.com,editor,2024-06-01T08:35:00Z,2024-06-01T08:35:00Z
+9,Bruno Rocha,bruno.rocha@example.com,user,2024-06-01T08:40:00Z,2024-06-01T08:40:00Z
+10,Isabela Alves,isabela.alves@example.com,moderator,2024-06-01T08:45:00Z,2024-06-01T08:45:00Z
+11,Renato Dias,renato.dias@example.com,user,2024-06-01T08:50:00Z,2024-06-01T08:50:00Z
+12,Carla Mendes,carla.mendes@example.com,editor,2024-06-01T08:55:00Z,2024-06-01T08:55:00Z
+13,Thiago Barbosa,thiago.barbosa@example.com,user,2024-06-01T09:00:00Z,2024-06-01T09:00:00Z
+14,Vanessa Freitas,vanessa.freitas@example.com,admin,2024-06-01T09:05:00Z,2024-06-01T09:05:00Z
+15,Diego Ramos,diego.ramos@example.com,moderator,2024-06-01T09:10:00Z,2024-06-01T09:10:00Z
+16,Leticia Castro,leticia.castro@example.com,user,2024-06-01T09:15:00Z,2024-06-01T09:15:00Z
+17,Marcelo Teixeira,marcelo.teixeira@example.com,editor,2024-06-01T09:20:00Z,2024-06-01T09:20:00Z
+18,Sofia Cardoso,sofia.cardoso@example.com,user,2024-06-01T09:25:00Z,2024-06-01T09:25:00Z
+19,André Nunes,andre.nunes@example.com,admin,2024-06-01T09:30:00Z,2024-06-01T09:30:00Z
+20,Beatriz Faria,beatriz.faria@example.com,user,2024-06-01T09:35:00Z,2024-06-01T09:35:00Z

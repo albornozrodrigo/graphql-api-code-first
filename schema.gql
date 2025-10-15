@@ -1,0 +1,103 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Tag {
+  """Tag ID"""
+  id: Int!
+
+  """Tag name"""
+  name: String!
+
+  """Posts"""
+  posts: [Post!]!
+}
+
+type Profile {
+  """Profile ID"""
+  id: Int!
+
+  """Profile bio"""
+  bio: String!
+
+  """Profile avatar"""
+  avatar: String!
+
+  """User"""
+  user: User!
+}
+
+type User {
+  """User ID"""
+  id: Int!
+
+  """User name"""
+  name: String!
+
+  """User email"""
+  email: String!
+
+  """User Role"""
+  role: String!
+
+  """User Profile"""
+  profile: Profile!
+
+  """User Posts"""
+  posts: [Post!]!
+}
+
+type Post {
+  """Post ID"""
+  id: Int!
+
+  """Post title"""
+  title: String!
+
+  """Post content"""
+  content: String!
+
+  """User"""
+  user: User!
+
+  """Tags"""
+  tags: [Tag!]!
+}
+
+type Query {
+  users: [User!]!
+  user(id: Int!): User!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
+}
+
+input CreateUserInput {
+  """User ID"""
+  id: Int!
+
+  """User name"""
+  name: String!
+
+  """User email"""
+  email: String!
+
+  """User email"""
+  profile: String!
+}
+
+input UpdateUserInput {
+  id: Int!
+
+  """User name"""
+  name: String
+
+  """User email"""
+  email: String
+
+  """User email"""
+  profile: String
+}
