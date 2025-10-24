@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { GraphQLResolveInfo } from 'graphql';
 import { Repository } from 'typeorm';
+import { mockPost } from '../../__mock__';
 import * as appUtils from '../../app.utils';
-import { Role } from '../../enums/role.enum';
-import { User } from '../../user/entities/user.entity';
 import { CreatePostInput } from '../dto/create-post.input';
 import { UpdatePostInput } from '../dto/update-post.input';
 import { Post } from '../entities/post.entity';
@@ -13,28 +14,6 @@ import { PostService } from '../post.service';
 describe('PostService', () => {
   let service: PostService;
   let postRepository: Repository<Post>;
-
-  const mockUser: User = {
-    id: 1,
-    name: 'Test User',
-    email: 'test@test.com',
-    password: 'hashedPassword',
-    role: Role.USER,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    profile: undefined,
-    posts: Promise.resolve([]),
-  };
-
-  const mockPost: Post = {
-    id: 1,
-    title: 'Test Post',
-    content: 'Test Content',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    user: Promise.resolve(mockUser),
-    tags: [],
-  };
 
   const mockCreatePostInput: CreatePostInput = {
     title: 'New Post',

@@ -2,13 +2,12 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { GraphQLResolveInfo } from 'graphql';
+import { mockPost, mockUser } from '../../__mock__';
 import { Role } from '../../enums/role.enum';
 import { TagLoader } from '../../tag/tag.loader';
-import { User } from '../../user/entities/user.entity';
 import { UserLoader } from '../../user/user.loader';
 import { CreatePostInput } from '../dto/create-post.input';
 import { UpdatePostInput } from '../dto/update-post.input';
-import { Post } from '../entities/post.entity';
 import { PostLoader } from '../post.loader';
 import { PostResolver } from '../post.resolver';
 import { PostService } from '../post.service';
@@ -18,28 +17,6 @@ describe('PostResolver', () => {
   let postService: PostService;
   let userLoader: UserLoader;
   let tagLoader: TagLoader;
-
-  const mockPost: Post = {
-    id: 1,
-    title: 'Test Post',
-    content: 'Test Content',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    user: Promise.resolve({ id: 1, email: 'test@test.com' } as User),
-    tags: [],
-  };
-
-  const mockUser: User = {
-    id: 1,
-    name: 'Test User',
-    email: 'test@test.com',
-    password: 'hashedPassword',
-    role: Role.USER,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    profile: undefined,
-    posts: Promise.resolve([]),
-  };
 
   const mockCreatePostInput: CreatePostInput = {
     title: 'New Post',

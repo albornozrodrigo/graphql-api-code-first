@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { GraphQLResolveInfo } from 'graphql';
-import '../../__mock__/pagination';
+import '../../__mock__';
 import { Role } from '../../enums/role.enum';
 import { UserLoader } from '../user.loader';
 import { UserService } from '../user.service';

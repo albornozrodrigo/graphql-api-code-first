@@ -3,7 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { GraphQLResolveInfo } from 'graphql';
 import { In } from 'typeorm';
-import '../../__mock__/pagination';
+import '../../__mock__';
+import { mockUser } from '../../__mock__';
 import { PaginationInput } from '../../common/dto/pagination.input';
 import { Role } from '../../enums/role.enum';
 import { CreateUserInput } from '../dto/create-user.input';
@@ -31,14 +32,6 @@ describe('UserService', () => {
     findOneByOrFail: jest.Mock;
     update: jest.Mock;
     delete: jest.Mock;
-  };
-
-  const mockUser = {
-    id: 1,
-    name: 'Rodrigo Albornoz',
-    email: 'rodrigo@example.com',
-    password: 'hashedPassword123',
-    role: Role.USER,
   };
 
   const mockCreateUserInput: CreateUserInput = {

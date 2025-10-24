@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { GraphQLResolveInfo } from 'graphql';
+import { mockUser } from '../../__mock__';
 import { PaginationInput } from '../../common/dto/pagination.input';
-import { Role } from '../../enums/role.enum';
 import { PostLoader } from '../../post/post.loader';
 import { ProfileLoader } from '../../profile/profile.loader';
 import { CreateUserInput } from '../dto/create-user.input';
@@ -18,18 +18,6 @@ describe('UserResolver', () => {
   let userService: jest.Mocked<UserService>;
   let postLoader: jest.Mocked<PostLoader>;
   let profileLoader: jest.Mocked<ProfileLoader>;
-
-  const mockUser: User = {
-    id: 1,
-    name: 'Rodrigo Albornoz',
-    email: 'rodrigo@example.com',
-    password: 'hashedPassword123',
-    role: Role.USER,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    posts: Promise.resolve([]),
-    profile: Promise.resolve({} as any),
-  };
 
   const mockCreateUserInput: CreateUserInput = {
     name: 'Rodrigo Albornoz',

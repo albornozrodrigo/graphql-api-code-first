@@ -9,9 +9,9 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { GraphQLResolveInfo } from 'graphql';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CurrentUser, Roles } from '../auth/auth.decorator';
 import { GqlAuthGuard } from '../auth/guards/auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
 import { Role } from '../enums/role.enum';
 import { PostLoader } from '../post/post.loader';

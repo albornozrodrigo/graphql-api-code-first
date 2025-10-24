@@ -9,7 +9,7 @@ import {
   mockProfile,
   mockProfiles,
   mockUser,
-} from '../../__mock__/pagination';
+} from '../../__mock__';
 import { CreateProfileInput } from '../dto/create-profile.input';
 import { UpdateProfileInput } from '../dto/update-profile.input';
 import { Profile } from '../entities/profile.entity';

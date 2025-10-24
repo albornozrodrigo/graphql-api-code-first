@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockInfo, mockProfiles, mockUser } from '../../__mock__/pagination';
+import { mockInfo, mockProfiles, mockUser } from '../../__mock__';
 import { Profile } from '../entities/profile.entity';
 import { ProfileLoader } from '../profile.loader';
 import { ProfileService } from '../profile.service';

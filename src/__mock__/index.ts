@@ -2,10 +2,12 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { PaginationInput } from '../common/dto/pagination.input';
 import { Role } from '../enums/role.enum';
+import { Post } from '../post/entities/post.entity';
 import { Profile } from '../profile/entities/profile.entity';
+import { Tag } from '../tag/entities/tag.entity';
 import { User } from '../user/entities/user.entity';
 
-export const mockUser: User = new User({
+export const mockUser: User = {
   id: 1,
   name: 'Test User',
   email: 'test@example.com',
@@ -15,16 +17,16 @@ export const mockUser: User = new User({
   role: Role.USER,
   createdAt: new Date(),
   updatedAt: new Date(),
-});
+};
 
-export const mockProfile: Profile = new Profile({
+export const mockProfile: Profile = {
   id: 1,
   bio: 'Test bio',
   avatar: 'test-avatar.png',
   user: Promise.resolve(mockUser),
   createdAt: new Date(),
   updatedAt: new Date(),
-});
+};
 
 export const mockProfiles = (count: number): Profile[] => {
   return Array.from({ length: count }, (_, i) => {
@@ -33,6 +35,44 @@ export const mockProfiles = (count: number): Profile[] => {
       id: i + 1,
       user: Promise.resolve(new User({ ...mockUser, id: i + 1 })),
     });
+  });
+};
+
+export const mockPost: Post = {
+  id: 1,
+  title: 'Test Post',
+  content: 'Test Content',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  user: Promise.resolve(mockUser),
+  tags: [],
+};
+
+export const mockPosts = (count: number): Post[] => {
+  return Array.from({ length: count }, (_, i) => {
+    return {
+      ...mockPost,
+      id: i + 1,
+      user: Promise.resolve(new User({ ...mockUser, id: i + 1 })),
+    };
+  });
+};
+
+export const mockTag: Tag = {
+  id: 1,
+  name: 'Test Tag',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  posts: Promise.resolve([mockPost]),
+};
+
+export const mockTags = (count: number): Tag[] => {
+  return Array.from({ length: count }, (_, i) => {
+    return {
+      ...mockTag,
+      id: i + 1,
+      posts: Promise.resolve(mockPosts(count)),
+    };
   });
 };
 

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { GraphQLResolveInfo } from 'graphql';
-import { Post } from '../../post/entities/post.entity';
+import { mockPost, mockTag, mockTags } from '../../__mock__';
 import { Tag } from '../entities/tag.entity';
 import { TagLoader } from '../tag.loader';
 import { TagService } from '../tag.service';
@@ -10,32 +10,6 @@ import { TagService } from '../tag.service';
 describe('TagLoader', () => {
   let loader: TagLoader;
   let tagService: TagService;
-
-  const mockPost: Post = {
-    id: 1,
-    title: 'Test Post',
-    content: 'Test Content',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    user: Promise.resolve({ id: 1, email: 'test@test.com' } as any),
-    tags: [],
-  };
-
-  const mockTag: Tag = {
-    id: 1,
-    name: 'Test Tag',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    posts: Promise.resolve([mockPost]),
-  };
-
-  const mockTag2: Tag = {
-    id: 2,
-    name: 'Test Tag 2',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    posts: Promise.resolve([mockPost]),
-  };
 
   const mockGraphQLResolveInfo = {} as GraphQLResolveInfo;
 
@@ -75,7 +49,7 @@ describe('TagLoader', () => {
   describe('findTagsByTagId', () => {
     it('should return tags by tag ids', async () => {
       const tagIds = [1, 2];
-      const expectedTags = [mockTag, mockTag2];
+      const expectedTags = mockTags(2);
 
       jest.spyOn(tagService, 'findAllByIds').mockResolvedValue(expectedTags);
 
@@ -90,13 +64,13 @@ describe('TagLoader', () => {
 
     it('should return tags in the same order as requested ids', async () => {
       const tagIds = [2, 1];
-      const serviceTags = [mockTag2, mockTag];
+      const serviceTags = mockTags(2).reverse();
 
       jest.spyOn(tagService, 'findAllByIds').mockResolvedValue(serviceTags);
 
       const result = await loader.findTagsByTagId.loadMany(tagIds);
 
-      expect(result).toEqual([mockTag2, mockTag]);
+      expect(result).toEqual(serviceTags);
     });
 
     it('should throw error when tag is not found', async () => {
@@ -132,13 +106,13 @@ describe('TagLoader', () => {
   describe('findTagsByPostIds', () => {
     it('should return tags grouped by post ids', async () => {
       const postIds = [1, 2];
-      const serviceTags = [mockTag, mockTag2];
+      const serviceTags = mockTags(2);
 
       jest.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
 
       const result = await loader.findTagsByPostIds.loadMany(postIds);
 
-      expect(result).toEqual([[mockTag, mockTag2], []]);
+      expect(result).toEqual([mockTags(2), mockTags(2)]);
       expect(tagService.findAllByPostIds).toHaveBeenCalledWith(
         postIds,
         mockGraphQLResolveInfo,
@@ -174,7 +148,7 @@ describe('TagLoader', () => {
       const post1 = { ...mockPost, id: 1 };
       const post2 = { ...mockPost, id: 2 };
       const tag1 = { ...mockTag, id: 1, posts: Promise.resolve([post1]) };
-      const tag2 = { ...mockTag2, id: 2, posts: Promise.resolve([post2]) };
+      const tag2 = { ...mockTag, id: 2, posts: Promise.resolve([post2]) };
       const serviceTags = [tag1, tag2];
 
       jest.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);

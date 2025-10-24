@@ -5,7 +5,7 @@ import {
   mockPagination,
   mockProfile,
   mockUser,
-} from '../../__mock__/pagination';
+} from '../../__mock__';
 import { UserLoader } from '../../user/user.loader';
 import { CreateProfileInput } from '../dto/create-profile.input';
 import { UpdateProfileInput } from '../dto/update-profile.input';
