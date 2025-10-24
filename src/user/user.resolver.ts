@@ -9,8 +9,9 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { GraphQLResolveInfo } from 'graphql';
-import { CurrentUser } from '../auth/auth.decorator';
-import { GqlAuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { CurrentUser, Roles } from '../auth/auth.decorator';
+import { GqlAuthGuard } from '../auth/guards/auth.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
 import { Role } from '../enums/role.enum';
 import { PostLoader } from '../post/post.loader';
@@ -56,6 +57,8 @@ export class UserResolver {
     return user;
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User, { name: 'updateUser' })
   update(

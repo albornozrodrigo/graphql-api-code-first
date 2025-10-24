@@ -10,7 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { GraphQLResolveInfo } from 'graphql';
 import { CurrentUser } from '../auth/auth.decorator';
-import { GqlAuthGuard } from '../auth/auth.guard';
+import { GqlAuthGuard } from '../auth/guards/auth.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
 import { User } from '../user/entities/user.entity';
 import { UserLoader } from '../user/user.loader';
