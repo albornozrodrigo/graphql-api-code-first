@@ -1,98 +1,99 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API NestJS com GraphQL (Code-First)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Visão Geral
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Esta é uma API escalável construída com **NestJS**, utilizando **GraphQL** na abordagem _Code-First_. O projeto serve como um exemplo prático de como estruturar uma aplicação moderna, com foco em performance, boas práticas e testabilidade.
 
-## Description
+A API utiliza um banco de dados **PostgreSQL** gerenciado pela ORM **TypeORM**, com autenticação baseada em **JWT (JSON Web Tokens)** e otimizações de consulta para resolver o problema N+1 usando **DataLoaders** e análise de **AST (Abstract Syntax Tree)**.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tecnologias Principais
 
-## Project setup
+- **Framework**: NestJS
+- **API**: GraphQL (Apollo Server, Code-First)
+- **Banco de Dados**: PostgreSQL
+- **ORM**: TypeORM
+- **Autenticação**: JWT (JSON Web Tokens)
+- **Testes**: Jest para testes unitários
+- **Linguagem**: TypeScript
+
+## Arquitetura e Conceitos Chave
+
+### 1. NestJS
+
+O projeto é estruturado em módulos, controladores (resolvers) e serviços, seguindo a arquitetura modular do NestJS. Isso promove uma clara separação de responsabilidades e facilita a manutenção e o crescimento da aplicação. A injeção de dependência é usada extensivamente para gerenciar os serviços e outras dependências, aproveitando o poder do TypeScript.
+
+### 2. GraphQL (Code-First com Apollo)
+
+A abordagem _Code-First_ foi adotada, utilizando **Apollo Server** e o ecossistema NestJS GraphQL. Isso significa que o schema GraphQL é gerado automaticamente a partir de classes e decoradores TypeScript, tornando o código a fonte única de verdade para a definição da API. As vantagens incluem:
+
+- **Consistência de Código**: O schema é derivado diretamente do código TypeScript, garantindo que as definições de tipo e os resolvers estejam sempre sincronizados.
+- **Desenvolvimento Ágil**: Permite um desenvolvimento mais rápido, pois não há necessidade de manter um arquivo de schema `.graphql` separado.
+- **Tipagem Forte**: Aproveita ao máximo o TypeScript para definir tipos de entrada, objetos e argumentos, proporcionando uma experiência de desenvolvimento robusta e com menos erros.
+
+Os resolvers do NestJS, definidos com decoradores como `@Query`, `@Mutation` e `@ResolveField`, implementam a lógica para cada campo do schema gerado.
+
+### 3. Otimização de Performance
+
+Para garantir que a API seja rápida e eficiente, duas técnicas principais de otimização foram implementadas:
+
+#### a. DataLoader
+
+O padrão **DataLoader** é utilizado para resolver o clássico problema de consulta N+1 em GraphQL. Ele agrupa múltiplas requisições de dados que ocorreriam em um único ciclo de eventos em uma única consulta ao banco de dados.
+
+No projeto, o `PostLoader` (por `tagId` e `userId`) são exemplos claros dessa implementação. Eles recebem uma lista de IDs, buscam todas as tags correspondentes de uma só vez e as distribuem de volta para os resolvers corretos.
+
+#### b. Análise de AST (Abstract Syntax Tree)
+
+Para evitar a busca de dados desnecessários no banco de dados (_over-fetching_), a API analisa a Árvore de Sintaxe Abstrata (AST) da consulta GraphQL.
+
+A função utilitária `getAttributes` inspeciona o objeto `GraphQLResolveInfo` para determinar exatamente quais campos foram solicitados pelo cliente. Apenas esses campos são incluídos na consulta ao banco de dados feita pelo TypeORM, resultando em queries mais leves e eficientes.
+
+### 4. Banco de Dados e ORM (Postgres & TypeORM)
+
+O **PostgreSQL** foi escolhido como o banco de dados relacional, e o **TypeORM** atua como a camada de ORM (Object-Relational Mapping). O TypeORM facilita a definição de entidades, a execução de migrações e a interação com o banco de dados de forma segura e produtiva, usando objetos e métodos TypeScript em vez de SQL bruto.
+
+### 5. Autenticação com JWT e Autorização Baseada em Papéis (Role-Based Authorization)
+
+A segurança das rotas que exigem autenticação é garantida por meio de JSON Web Tokens (JWT). Além disso, a API implementa **Autorização Baseada em Papéis (Role-Based Authorization - RBA)** para controlar o acesso a recursos específicos. O fluxo geral é:
+
+1. O usuário faz login com suas credenciais.
+2. A API valida as credenciais e gera um token JWT assinado, contendo informações do usuário (como o `userId` e seus `roles`).
+3. O cliente armazena o token e o envia no cabeçalho `Authorization` de cada requisição subsequente.
+4. Um `Guard` do NestJS intercepta as requisições, valida o token e anexa os dados do usuário (payload) ao objeto da requisição.
+5. Os `Guards` e `Decorators` personalizados verificam os `roles` do usuário na requisição para autorizar ou negar o acesso a resolvers ou campos específicos (ex: verificar se o usuário tem permissão para editar ou deletar um comentário).
+
+### 6. Testes Unitários
+
+O projeto possui uma suíte de testes unitários construída com **Jest**. Os testes focam em isolar e validar a lógica de negócio nos serviços e a correta implementação dos `DataLoaders`, utilizando mocks para simular dependências como serviços e o banco de dados. Isso garante que novas alterações não quebrem a funcionalidade existente.
+
+## Como Executar
+
+1.  **Configurar Variáveis de Ambiente**
+    Crie um arquivo `.env` na raiz do projeto a partir do `.env.example` e preencha as variáveis necessárias (banco de dados, segredo do JWT, etc.).
+
+2.  **Instalar Dependências**
+
+    ```bash
+    pnpm install
+    ```
+
+3.  **Executar a Aplicação**
+    ```bash
+    pnpm start:dev
+    ```
+
+A API estará disponível em `http://localhost:3000/graphql`.
+
+## Executando os Testes
+
+Para rodar a suíte de testes unitários, execute:
 
 ```bash
-$ pnpm install
+npm test
 ```
 
-## Compile and run the project
+Para ver a cobertura de testes:
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+npm run test:cov
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

@@ -9,6 +9,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { GraphQLResolveInfo } from 'graphql';
+import { TagLoader } from 'src/tag/tag.loader';
 import { CurrentUser } from '../auth/auth.decorator';
 import { GqlAuthGuard } from '../auth/auth.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
@@ -17,7 +18,6 @@ import { UserLoader } from '../user/user.loader';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
 import { Post } from './entities/post.entity';
-import { PostLoader } from './post.loader';
 import { PostService } from './post.service';
 
 @Resolver(() => Post)
@@ -25,7 +25,7 @@ export class PostResolver {
   constructor(
     private readonly postService: PostService,
     private readonly userLoader: UserLoader,
-    private readonly postLoader: PostLoader,
+    private readonly tagLoader: TagLoader,
   ) {}
 
   @Query(() => [Post], { name: 'allPosts' })
@@ -91,14 +91,12 @@ export class PostResolver {
   }
 
   @ResolveField('tags')
-  // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-unused-vars
   async tags(@Parent() post: Post, @Info() info: GraphQLResolveInfo) {
     if (!post) return [];
-    return [];
 
-    // const loader = this.tagLoader.setInfo(info);
-    // const tags = await loader.findTagsByPostId.load(post.id);
+    const loader = this.tagLoader.setInfo(info);
+    const tags = await loader.findTagsByPostIds.load(post.id);
 
-    // return tags;
+    return tags;
   }
 }
