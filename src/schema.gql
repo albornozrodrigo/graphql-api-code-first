@@ -13,6 +13,23 @@ type Tag {
   posts: [Post!]!
 }
 
+type Post {
+  """Post ID"""
+  id: Int!
+
+  """Post title"""
+  title: String!
+
+  """Post content"""
+  content: String!
+
+  """User"""
+  user: User!
+
+  """Tags"""
+  tags: [Tag!]!
+}
+
 type Profile {
   """Profile ID"""
   id: Int!
@@ -47,40 +64,102 @@ type User {
   posts: [Post!]!
 }
 
-type Post {
-  """Post ID"""
-  id: Int!
-
-  """Post title"""
-  title: String!
-
-  """Post content"""
-  content: String!
-
-  """User"""
-  user: User!
-
-  """Tags"""
-  tags: [Tag!]!
+type AuthResponse {
+  access_token: String!
 }
 
 type Query {
-  users: [User!]!
-  getUserById(id: Int!): User!
+  allUsers(pagination: PaginationInput): [User!]!
+  user(id: Float!): User!
+  me: User!
+  allPosts(pagination: PaginationInput): [Post!]!
+  post(id: Float!): Post!
+  allPostsByUser(pagination: PaginationInput): [Post!]!
+  allProfiles(pagination: PaginationInput): [Profile!]!
+  profile(id: Float!): Profile!
+  profileByUserId: Profile!
+  allTags(pagination: PaginationInput): [Tag!]!
+  tag(id: Float!): Tag!
+  allTagsByPostId(postId: Float!, pagination: PaginationInput): [Tag!]!
+}
+
+input PaginationInput {
+  limit: Int! = 10
+  page: Int! = 1
 }
 
 type Mutation {
+  login(authInput: AuthInput!): AuthResponse!
   createUser(createUserInput: CreateUserInput!): User!
-  updateUser(id: Int!, updateUserInput: UpdateUserInput!): User!
-  removeUser(id: Int!): Boolean!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  updateUserPassword(updateUserPasswordInput: UpdateUserPasswordInput!): Boolean!
+  removeUser: Boolean!
+  createPost(createPostInput: CreatePostInput!): Post!
+  updatePost(id: Float!, updatePostInput: UpdatePostInput!): Post!
+  removePost(id: Float!): Boolean!
+  createProfile(createProfileInput: CreateProfileInput!): Profile!
+  updateProfile(id: Float!, updateProfileInput: UpdateProfileInput!): Profile!
+  removeProfile: Boolean!
+  createTag(createTagInput: CreateTagInput!): Tag!
+  updateTag(id: Float!, updateTagInput: UpdateTagInput!): Tag!
+  removeTag(id: Float!): Boolean!
+}
+
+input AuthInput {
+  email: String!
+  password: String!
 }
 
 input CreateUserInput {
   name: String!
   email: String!
+  password: String!
+  role: Role
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 input UpdateUserInput {
+  name: String!
+  email: String!
+  role: Role
+}
+
+input UpdateUserPasswordInput {
+  password: String!
+}
+
+input CreatePostInput {
+  title: String!
+  content: String!
+  tagIds: [Int!]
+}
+
+input UpdatePostInput {
+  title: String
+  content: String
+  tagIds: [Int!]
+}
+
+input CreateProfileInput {
+  bio: String!
+  avatar: String!
+}
+
+input UpdateProfileInput {
+  bio: String
+  avatar: String
+}
+
+input CreateTagInput {
+  name: String!
+  postId: Int!
+}
+
+input UpdateTagInput {
   name: String
-  email: String
+  postId: Int
 }

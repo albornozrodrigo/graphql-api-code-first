@@ -5,9 +5,13 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Post } from './user/entities/post.entity';
-import { Profile } from './user/entities/profile.entity';
-import { Tag } from './user/entities/tag.entity';
+import { AuthModule } from './auth/auth.module';
+import { Post } from './post/entities/post.entity';
+import { PostModule } from './post/post.module';
+import { Profile } from './profile/entities/profile.entity';
+import { ProfileModule } from './profile/profile.module';
+import { Tag } from './tag/entities/tag.entity';
+import { TagModule } from './tag/tag.module';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 
@@ -22,12 +26,12 @@ import { UserModule } from './user/user.module';
       debug: true,
       autoSchemaFile: 'src/schema.gql',
       installSubscriptionHandlers: true,
-      formatError: (error) => {
-        return {
-          message: error.message,
-          code: error.extensions?.code,
-        };
-      },
+      // formatError: (error) => {
+      //   return {
+      //     message: error.message,
+      //     code: error.extensions?.code,
+      //   };
+      // },
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -39,11 +43,16 @@ import { UserModule } from './user/user.module';
       entities: [User, Profile, Post, Tag],
       synchronize: true,
       autoLoadEntities: true,
+      logging: ['query', 'error'],
       ssl: {
         rejectUnauthorized: false,
       },
     }),
+    AuthModule,
     UserModule,
+    PostModule,
+    ProfileModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
