@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { GraphQLResolveInfo } from 'graphql';
 import { Role } from '../../enums/role.enum';
+import { TagLoader } from '../../tag/tag.loader';
 import { User } from '../../user/entities/user.entity';
 import { UserLoader } from '../../user/user.loader';
 import { CreatePostInput } from '../dto/create-post.input';
@@ -15,6 +17,7 @@ describe('PostResolver', () => {
   let resolver: PostResolver;
   let postService: PostService;
   let userLoader: UserLoader;
+  let tagLoader: TagLoader;
 
   const mockPost: Post = {
     id: 1,
@@ -81,12 +84,22 @@ describe('PostResolver', () => {
             setInfo: jest.fn().mockReturnThis(),
           },
         },
+        {
+          provide: TagLoader,
+          useValue: {
+            setInfo: jest.fn().mockReturnThis(),
+            findTagsByPostIds: {
+              load: jest.fn(),
+            },
+          },
+        },
       ],
     }).compile();
 
     resolver = module.get<PostResolver>(PostResolver);
     postService = module.get<PostService>(PostService);
     userLoader = module.get<UserLoader>(UserLoader);
+    tagLoader = module.get<TagLoader>(TagLoader);
   });
 
   it('should be defined', () => {
@@ -262,8 +275,33 @@ describe('PostResolver', () => {
   });
 
   describe('tags field resolver', () => {
-    it('should return empty array for post', async () => {
+    it('should return tags for post', async () => {
+      const mockTagFromLoader = {
+        id: 1,
+        name: 'Test Tag',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        posts: Promise.resolve([]),
+      };
+      jest.spyOn(tagLoader, 'setInfo').mockReturnThis();
+      jest
+        .spyOn(tagLoader.findTagsByPostIds, 'load')
+        .mockResolvedValue([mockTagFromLoader]);
+
       const result = await resolver.tags(mockPost, mockGraphQLResolveInfo);
+
+      expect(result).toEqual([mockTagFromLoader]);
+      expect(tagLoader.setInfo).toHaveBeenCalledWith(mockGraphQLResolveInfo);
+      expect(tagLoader.findTagsByPostIds.load).toHaveBeenCalledWith(
+        mockPost.id,
+      );
+    });
+
+    it('should return empty array for undefined post', async () => {
+      const result = await resolver.tags(
+        undefined as any,
+        mockGraphQLResolveInfo,
+      );
 
       expect(result).toEqual([]);
     });

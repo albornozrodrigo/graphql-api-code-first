@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TagLoader } from 'src/tag/tag.loader';
 import { Tag } from '../tag/entities/tag.entity';
 import { TagService } from '../tag/tag.service';
 import { User } from '../user/entities/user.entity';
@@ -18,6 +19,7 @@ import { PostService } from './post.service';
     PostLoader,
     UserService,
     UserLoader,
+    TagLoader,
     TagService,
   ],
 })

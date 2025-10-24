@@ -9,10 +9,10 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { GraphQLResolveInfo } from 'graphql';
-import { TagLoader } from 'src/tag/tag.loader';
 import { CurrentUser } from '../auth/auth.decorator';
 import { GqlAuthGuard } from '../auth/auth.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
+import { TagLoader } from '../tag/tag.loader';
 import { User } from '../user/entities/user.entity';
 import { UserLoader } from '../user/user.loader';
 import { CreatePostInput } from './dto/create-post.input';
