@@ -5,10 +5,11 @@ import '../../__mock__';
 import { Role } from '../../enums/role.enum';
 import { UserLoader } from '../user.loader';
 import { UserService } from '../user.service';
+import { describe, it, expect, beforeEach, vi, Mocked } from 'vitest';
 
 describe('UserLoader', () => {
   let loader: UserLoader;
-  let userService: jest.Mocked<UserService>;
+  let userService: Mocked<UserService>;
 
   const mockUser = {
     id: 1,
@@ -31,7 +32,7 @@ describe('UserLoader', () => {
         {
           provide: UserService,
           useValue: {
-            findAllByIds: jest.fn(),
+            findAllByIds: vi.fn(),
           },
         },
       ],

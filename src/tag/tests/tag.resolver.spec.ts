@@ -8,6 +8,7 @@ import { UpdateTagInput } from '../dto/update-tag.input';
 import { Tag } from '../entities/tag.entity';
 import { TagResolver } from '../tag.resolver';
 import { TagService } from '../tag.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('TagResolver', () => {
   let resolver: TagResolver;
@@ -40,20 +41,20 @@ describe('TagResolver', () => {
         {
           provide: TagService,
           useValue: {
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            findAllByPostId: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
+            findAll: vi.fn(),
+            findOne: vi.fn(),
+            findAllByPostId: vi.fn(),
+            create: vi.fn(),
+            update: vi.fn(),
+            remove: vi.fn(),
           },
         },
         {
           provide: PostLoader,
           useValue: {
-            setInfo: jest.fn().mockReturnThis(),
-            findPostsByUserIds: {
-              load: jest.fn(),
+            setInfo: vi.fn().mockReturnThis(),
+            findPostsByTagIds: {
+              load: vi.fn(),
             },
           },
         },
@@ -72,7 +73,7 @@ describe('TagResolver', () => {
   describe('findAll', () => {
     it('should return all tags', async () => {
       const expectedTags = [mockTag];
-      jest.spyOn(tagService, 'findAll').mockResolvedValue(expectedTags);
+      vi.spyOn(tagService, 'findAll').mockResolvedValue(expectedTags);
 
       const result = await resolver.findAll(mockGraphQLResolveInfo);
 
@@ -86,7 +87,7 @@ describe('TagResolver', () => {
     it('should return all tags with pagination', async () => {
       const pagination = { page: 1, limit: 10 };
       const expectedTags = [mockTag];
-      jest.spyOn(tagService, 'findAll').mockResolvedValue(expectedTags);
+      vi.spyOn(tagService, 'findAll').mockResolvedValue(expectedTags);
 
       const result = await resolver.findAll(mockGraphQLResolveInfo, pagination);
 
@@ -101,7 +102,7 @@ describe('TagResolver', () => {
   describe('findOne', () => {
     it('should return a tag by id', async () => {
       const tagId = 1;
-      jest.spyOn(tagService, 'findOne').mockResolvedValue(mockTag);
+      vi.spyOn(tagService, 'findOne').mockResolvedValue(mockTag);
 
       const result = await resolver.findOne(tagId, mockGraphQLResolveInfo);
 
@@ -117,7 +118,7 @@ describe('TagResolver', () => {
     it('should return tags by post id', async () => {
       const postId = 1;
       const expectedTags = [mockTag];
-      jest.spyOn(tagService, 'findAllByPostId').mockResolvedValue(expectedTags);
+      vi.spyOn(tagService, 'findAllByPostId').mockResolvedValue(expectedTags);
 
       const result = await resolver.findAllByPostId(
         postId,
@@ -136,7 +137,7 @@ describe('TagResolver', () => {
       const postId = 1;
       const pagination = { page: 1, limit: 10 };
       const expectedTags = [mockTag];
-      jest.spyOn(tagService, 'findAllByPostId').mockResolvedValue(expectedTags);
+      vi.spyOn(tagService, 'findAllByPostId').mockResolvedValue(expectedTags);
 
       const result = await resolver.findAllByPostId(
         postId,
@@ -156,7 +157,7 @@ describe('TagResolver', () => {
   describe('create', () => {
     it('should create a new tag', async () => {
       const expectedTag = { ...mockTag, ...mockCreateTagInput };
-      jest.spyOn(tagService, 'create').mockResolvedValue(expectedTag);
+      vi.spyOn(tagService, 'create').mockResolvedValue(expectedTag);
 
       const result = await resolver.create(mockCreateTagInput);
 
@@ -169,7 +170,7 @@ describe('TagResolver', () => {
     it('should update a tag', async () => {
       const tagId = 1;
       const expectedTag = { ...mockTag, ...mockUpdateTagInput };
-      jest.spyOn(tagService, 'update').mockResolvedValue(expectedTag);
+      vi.spyOn(tagService, 'update').mockResolvedValue(expectedTag);
 
       const result = await resolver.updateTag(tagId, mockUpdateTagInput);
 
@@ -181,7 +182,7 @@ describe('TagResolver', () => {
   describe('removeTag', () => {
     it('should remove a tag', async () => {
       const tagId = 1;
-      jest.spyOn(tagService, 'remove').mockResolvedValue(true);
+      vi.spyOn(tagService, 'remove').mockResolvedValue(true);
 
       const result = await resolver.removeTag(tagId);
 
@@ -203,16 +204,16 @@ describe('TagResolver', () => {
           tags: [],
         },
       ];
-      jest.spyOn(postLoader, 'setInfo').mockReturnThis();
-      jest
-        .spyOn(postLoader.findPostsByUserIds, 'load')
-        .mockResolvedValue(mockPosts);
+      vi.spyOn(postLoader, 'setInfo').mockReturnThis();
+      vi.spyOn(postLoader.findPostsByTagIds, 'load').mockResolvedValue(
+        mockPosts,
+      );
 
       const result = await resolver.posts(mockTag, mockGraphQLResolveInfo);
 
       expect(result).toEqual(mockPosts);
       expect(postLoader.setInfo).toHaveBeenCalledWith(mockGraphQLResolveInfo);
-      expect(postLoader.findPostsByUserIds.load).toHaveBeenCalledWith(
+      expect(postLoader.findPostsByTagIds.load).toHaveBeenCalledWith(
         mockTag.id,
       );
     });

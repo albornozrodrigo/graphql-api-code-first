@@ -15,6 +15,8 @@ import { TagModule } from './tag/tag.module';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,8 +24,8 @@ import { UserModule } from './user/user.module';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      graphiql: true,
-      debug: true,
+      graphiql: !isProduction,
+      debug: !isProduction,
       autoSchemaFile: 'src/schema.gql',
       installSubscriptionHandlers: true,
       // formatError: (error) => {
@@ -41,12 +43,17 @@ import { UserModule } from './user/user.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, Profile, Post, Tag],
-      synchronize: true,
+      // synchronize altera o schema do banco automaticamente: só fora de produção
+      synchronize: !isProduction,
       autoLoadEntities: true,
-      logging: ['query', 'error'],
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      logging: isProduction ? ['error'] : ['query', 'error'],
+      ssl:
+        process.env.DB_SSL === 'true'
+          ? {
+              rejectUnauthorized:
+                process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false',
+            }
+          : false,
     }),
     AuthModule,
     UserModule,

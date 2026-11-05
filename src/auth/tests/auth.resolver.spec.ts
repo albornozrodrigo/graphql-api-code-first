@@ -4,6 +4,7 @@ import { Role } from '../../enums/role.enum';
 import { AuthResolver } from '../auth.resolver';
 import { AuthService } from '../auth.service';
 import { AuthInput } from '../dto/auth.input';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -16,8 +17,8 @@ describe('AuthResolver', () => {
         {
           provide: AuthService,
           useValue: {
-            login: jest.fn(() => ({ access_token: 'token' })),
-            validateUser: jest.fn(),
+            login: vi.fn(() => ({ access_token: 'token' })),
+            validateUser: vi.fn(),
           },
         },
       ],
@@ -45,7 +46,7 @@ describe('AuthResolver', () => {
         role: Role.USER,
       };
 
-      jest.spyOn(service, 'validateUser').mockResolvedValue(user);
+      vi.spyOn(service, 'validateUser').mockResolvedValue(user);
 
       const result = await resolver.login(authInput);
 
@@ -60,7 +61,7 @@ describe('AuthResolver', () => {
         password: 'password',
       };
 
-      jest.spyOn(service, 'validateUser').mockResolvedValue(null);
+      vi.spyOn(service, 'validateUser').mockResolvedValue(null);
 
       await expect(resolver.login(authInput)).rejects.toThrow(
         'Invalid credentials',

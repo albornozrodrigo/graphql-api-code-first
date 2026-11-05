@@ -2,13 +2,14 @@ import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Info,
+  Int,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { GraphQLResolveInfo } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql';
 import { GqlAuthGuard } from '../auth/guards/auth.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
 import { PostLoader } from '../post/post.loader';
@@ -33,7 +34,10 @@ export class TagResolver {
   }
 
   @Query(() => Tag, { name: 'tag' })
-  findOne(@Args('id') id: number, @Info() info: GraphQLResolveInfo) {
+  findOne(
+    @Args('id', { type: () => Int }) id: number,
+    @Info() info: GraphQLResolveInfo,
+  ) {
     return this.tagService.findOne(id, info);
   }
 
@@ -42,7 +46,7 @@ export class TagResolver {
   @UseGuards(GqlAuthGuard)
   @Query(() => [Tag], { name: 'allTagsByPostId' })
   findAllByPostId(
-    @Args('postId') postId: number,
+    @Args('postId', { type: () => Int }) postId: number,
     @Info() info: GraphQLResolveInfo,
     @Args('pagination', { nullable: true }) pagination?: PaginationInput,
   ) {
@@ -58,7 +62,7 @@ export class TagResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Tag)
   updateTag(
-    @Args('id') id: number,
+    @Args('id', { type: () => Int }) id: number,
     @Args('updateTagInput') updateTagInput: UpdateTagInput,
   ) {
     return this.tagService.update(id, updateTagInput);
@@ -66,7 +70,7 @@ export class TagResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean, { name: 'removeTag' })
-  removeTag(@Args('id') id: number) {
+  removeTag(@Args('id', { type: () => Int }) id: number) {
     return this.tagService.remove(id);
   }
 
@@ -77,7 +81,7 @@ export class TagResolver {
     if (!tag) return null;
 
     const loader = this.postLoader.setInfo(info);
-    const posts = await loader.findPostsByUserIds.load(tag.id);
+    const posts = await loader.findPostsByTagIds.load(tag.id);
 
     return posts;
   }

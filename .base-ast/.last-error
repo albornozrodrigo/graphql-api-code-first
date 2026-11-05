@@ -1,0 +1,24 @@
+# Extracting 73 files from /Users/rodrigo/Projects/graphql-api-code-first
+Traceback (most recent call last):
+  File "/Users/rodrigo/.base-gbl/scripts/ast/extractor.py", line 7711, in _check_tree_sitter_version
+    from tree_sitter import LANGUAGE_VERSION
+ModuleNotFoundError: No module named 'tree_sitter'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/rodrigo/.base-gbl/scripts/ast/onto_ast.py", line 301, in <module>
+    main()
+    ~~~~^^
+  File "/Users/rodrigo/.base-gbl/scripts/ast/onto_ast.py", line 278, in main
+    ttl = extract_project(target, project, full=args.full, confirm=args.confirm)
+  File "/Users/rodrigo/.base-gbl/scripts/ast/onto_ast.py", line 143, in extract_project
+    result = extract(files, cache_root=target)
+  File "/Users/rodrigo/.base-gbl/scripts/ast/extractor.py", line 8362, in extract
+    _check_tree_sitter_version()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/rodrigo/.base-gbl/scripts/ast/extractor.py", line 7713, in _check_tree_sitter_version
+    raise ImportError(
+        "tree-sitter is not installed. Run: pip install 'tree-sitter>=0.23.0'"
+    )
+ImportError: tree-sitter is not installed. Run: pip install 'tree-sitter>=0.23.0'

@@ -11,6 +11,7 @@ import { UpdatePostInput } from '../dto/update-post.input';
 import { PostLoader } from '../post.loader';
 import { PostResolver } from '../post.resolver';
 import { PostService } from '../post.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('PostResolver', () => {
   let resolver: PostResolver;
@@ -38,35 +39,35 @@ describe('PostResolver', () => {
         {
           provide: PostService,
           useValue: {
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            findAllByUserId: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
+            findAll: vi.fn(),
+            findOne: vi.fn(),
+            findAllByUserId: vi.fn(),
+            create: vi.fn(),
+            update: vi.fn(),
+            remove: vi.fn(),
           },
         },
         {
           provide: UserLoader,
           useValue: {
-            setInfo: jest.fn().mockReturnThis(),
+            setInfo: vi.fn().mockReturnThis(),
             findUsersByPostId: {
-              load: jest.fn(),
+              load: vi.fn(),
             },
           },
         },
         {
           provide: PostLoader,
           useValue: {
-            setInfo: jest.fn().mockReturnThis(),
+            setInfo: vi.fn().mockReturnThis(),
           },
         },
         {
           provide: TagLoader,
           useValue: {
-            setInfo: jest.fn().mockReturnThis(),
+            setInfo: vi.fn().mockReturnThis(),
             findTagsByPostIds: {
-              load: jest.fn(),
+              load: vi.fn(),
             },
           },
         },
@@ -86,7 +87,7 @@ describe('PostResolver', () => {
   describe('findAll', () => {
     it('should return all posts', async () => {
       const expectedPosts = [mockPost];
-      jest.spyOn(postService, 'findAll').mockResolvedValue(expectedPosts);
+      vi.spyOn(postService, 'findAll').mockResolvedValue(expectedPosts);
 
       const result = await resolver.findAll(mockGraphQLResolveInfo);
 
@@ -100,7 +101,7 @@ describe('PostResolver', () => {
     it('should return all posts with pagination', async () => {
       const pagination = { page: 1, limit: 10 };
       const expectedPosts = [mockPost];
-      jest.spyOn(postService, 'findAll').mockResolvedValue(expectedPosts);
+      vi.spyOn(postService, 'findAll').mockResolvedValue(expectedPosts);
 
       const result = await resolver.findAll(mockGraphQLResolveInfo, pagination);
 
@@ -115,7 +116,7 @@ describe('PostResolver', () => {
   describe('findOne', () => {
     it('should return a post by id', async () => {
       const postId = 1;
-      jest.spyOn(postService, 'findOne').mockResolvedValue(mockPost);
+      vi.spyOn(postService, 'findOne').mockResolvedValue(mockPost);
 
       const result = await resolver.findOne(postId, mockGraphQLResolveInfo);
 
@@ -130,9 +131,7 @@ describe('PostResolver', () => {
   describe('findAllByUserId', () => {
     it('should return posts by user id', async () => {
       const expectedPosts = [mockPost];
-      jest
-        .spyOn(postService, 'findAllByUserId')
-        .mockResolvedValue(expectedPosts);
+      vi.spyOn(postService, 'findAllByUserId').mockResolvedValue(expectedPosts);
 
       const result = await resolver.findAllByUserId(
         mockUser,
@@ -150,9 +149,7 @@ describe('PostResolver', () => {
     it('should return posts by user id with pagination', async () => {
       const pagination = { page: 1, limit: 10 };
       const expectedPosts = [mockPost];
-      jest
-        .spyOn(postService, 'findAllByUserId')
-        .mockResolvedValue(expectedPosts);
+      vi.spyOn(postService, 'findAllByUserId').mockResolvedValue(expectedPosts);
 
       const result = await resolver.findAllByUserId(
         mockUser,
@@ -172,7 +169,7 @@ describe('PostResolver', () => {
   describe('create', () => {
     it('should create a new post', async () => {
       const expectedPost = { ...mockPost, ...mockCreatePostInput };
-      jest.spyOn(postService, 'create').mockResolvedValue(expectedPost);
+      vi.spyOn(postService, 'create').mockResolvedValue(expectedPost);
 
       const result = await resolver.create(mockUser, mockCreatePostInput);
 
@@ -188,7 +185,7 @@ describe('PostResolver', () => {
     it('should update a post', async () => {
       const postId = 1;
       const expectedPost = { ...mockPost, ...mockUpdatePostInput };
-      jest.spyOn(postService, 'update').mockResolvedValue(expectedPost);
+      vi.spyOn(postService, 'update').mockResolvedValue(expectedPost);
 
       const result = await resolver.update(
         mockUser,
@@ -208,7 +205,7 @@ describe('PostResolver', () => {
   describe('remove', () => {
     it('should remove a post', async () => {
       const postId = 1;
-      jest.spyOn(postService, 'remove').mockResolvedValue(true);
+      vi.spyOn(postService, 'remove').mockResolvedValue(true);
 
       const result = await resolver.remove(mockUser, postId);
 
@@ -230,10 +227,10 @@ describe('PostResolver', () => {
         profile: undefined,
         posts: Promise.resolve([]),
       };
-      jest.spyOn(userLoader, 'setInfo').mockReturnThis();
-      jest
-        .spyOn(userLoader.findUsersByPostId, 'load')
-        .mockResolvedValue(mockUserFromLoader);
+      vi.spyOn(userLoader, 'setInfo').mockReturnThis();
+      vi.spyOn(userLoader.findUsersByPostId, 'load').mockResolvedValue(
+        mockUserFromLoader,
+      );
 
       const result = await resolver.user(mockPost, mockGraphQLResolveInfo);
 
@@ -260,10 +257,10 @@ describe('PostResolver', () => {
         updatedAt: new Date(),
         posts: Promise.resolve([]),
       };
-      jest.spyOn(tagLoader, 'setInfo').mockReturnThis();
-      jest
-        .spyOn(tagLoader.findTagsByPostIds, 'load')
-        .mockResolvedValue([mockTagFromLoader]);
+      vi.spyOn(tagLoader, 'setInfo').mockReturnThis();
+      vi.spyOn(tagLoader.findTagsByPostIds, 'load').mockResolvedValue([
+        mockTagFromLoader,
+      ]);
 
       const result = await resolver.tags(mockPost, mockGraphQLResolveInfo);
 

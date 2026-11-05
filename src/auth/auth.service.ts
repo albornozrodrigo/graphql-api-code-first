@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from '../user/entities/user.entity';
@@ -19,16 +19,19 @@ export class AuthService {
     User,
     'password' | 'createdAt' | 'updatedAt' | 'posts'
   > | null> {
-    const user: User = await this.userService.findOneByEmail(email);
+    // Mesma mensagem para e-mail inexistente e senha errada (evita enumeração de usuários)
+    const user: User | null = await this.userService
+      .findOneByEmail(email)
+      .catch(() => null);
 
     if (!user) {
-      throw new Error('User not found');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     return {

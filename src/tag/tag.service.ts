@@ -85,11 +85,11 @@ export class TagService {
 
     return await this.tagRepository
       .createQueryBuilder('tag')
-      .select(Object.keys(attributes).map((attr: string) => `user.${attr}`))
+      .select(Object.keys(attributes).map((attr: string) => `tag.${attr}`))
       .innerJoin('tag.posts', 'post', 'post.id IN (:...postIds)', {
         postIds,
       })
-      .addSelect('tag.id')
+      .addSelect('post.id')
       .getMany();
   }
 

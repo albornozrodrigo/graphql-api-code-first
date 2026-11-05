@@ -2,10 +2,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GraphQLResolveInfo } from 'graphql';
 import { Role } from '../../enums/role.enum';
+import { Tag } from '../../tag/entities/tag.entity';
 import { User } from '../../user/entities/user.entity';
 import { Post } from '../entities/post.entity';
 import { PostLoader } from '../post.loader';
 import { PostService } from '../post.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('PostLoader', () => {
   let loader: PostLoader;
@@ -52,9 +54,9 @@ describe('PostLoader', () => {
         {
           provide: PostService,
           useValue: {
-            findAllByIds: jest.fn(),
-            findAllByUserIds: jest.fn(),
-            findAllByTagIds: jest.fn(),
+            findAllByIds: vi.fn(),
+            findAllByUserIds: vi.fn(),
+            findAllByTagIds: vi.fn(),
           },
         },
       ],
@@ -84,7 +86,7 @@ describe('PostLoader', () => {
       const postIds = [1, 2];
       const expectedPosts = [mockPost, mockPost2];
 
-      jest.spyOn(postService, 'findAllByIds').mockResolvedValue(expectedPosts);
+      vi.spyOn(postService, 'findAllByIds').mockResolvedValue(expectedPosts);
 
       const result = await loader.findPostsByPostId.loadMany(postIds);
 
@@ -99,7 +101,7 @@ describe('PostLoader', () => {
       const postIds = [2, 1];
       const servicePosts = [mockPost2, mockPost];
 
-      jest.spyOn(postService, 'findAllByIds').mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByPostId.loadMany(postIds);
 
@@ -110,7 +112,7 @@ describe('PostLoader', () => {
       const postIds = [1, 999];
       const servicePosts = [mockPost];
 
-      jest.spyOn(postService, 'findAllByIds').mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByPostId.loadMany(postIds);
 
@@ -125,7 +127,7 @@ describe('PostLoader', () => {
     it('should handle empty post ids array', async () => {
       const postIds: number[] = [];
 
-      jest.spyOn(postService, 'findAllByIds').mockResolvedValue([]);
+      vi.spyOn(postService, 'findAllByIds').mockResolvedValue([]);
 
       const result = await loader.findPostsByPostId.loadMany(postIds);
 
@@ -141,9 +143,7 @@ describe('PostLoader', () => {
       const userIds = [1, 2];
       const servicePosts = [mockPost, mockPost2];
 
-      jest
-        .spyOn(postService, 'findAllByUserIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByUserIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByUserIds.loadMany(userIds);
 
@@ -158,9 +158,7 @@ describe('PostLoader', () => {
       const userIds = [1, 2];
       const servicePosts: Post[] = [];
 
-      jest
-        .spyOn(postService, 'findAllByUserIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByUserIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByUserIds.loadMany(userIds);
 
@@ -170,7 +168,7 @@ describe('PostLoader', () => {
     it('should handle empty user ids array', async () => {
       const userIds: number[] = [];
 
-      jest.spyOn(postService, 'findAllByUserIds').mockResolvedValue([]);
+      vi.spyOn(postService, 'findAllByUserIds').mockResolvedValue([]);
 
       const result = await loader.findPostsByUserIds.loadMany(userIds);
 
@@ -188,9 +186,7 @@ describe('PostLoader', () => {
       const post2 = { ...mockPost2, id: 2, user: Promise.resolve(user2) };
       const servicePosts = [post1, post2];
 
-      jest
-        .spyOn(postService, 'findAllByUserIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByUserIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByUserIds.loadMany(userIds);
 
@@ -201,15 +197,16 @@ describe('PostLoader', () => {
   describe('findPostsByTagIds', () => {
     it('should return posts grouped by tag ids', async () => {
       const tagIds = [1, 2];
-      const servicePosts = [mockPost, mockPost2];
+      const tag1 = { id: 1 } as Tag;
+      const post1 = { ...mockPost, tags: [tag1] };
+      const post2 = { ...mockPost2, tags: [tag1] };
+      const servicePosts = [post1, post2];
 
-      jest
-        .spyOn(postService, 'findAllByTagIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByTagIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByTagIds.loadMany(tagIds);
 
-      expect(result).toEqual([[mockPost, mockPost2], []]);
+      expect(result).toEqual([[post1, post2], []]);
       expect(postService.findAllByTagIds).toHaveBeenCalledWith(
         tagIds,
         mockGraphQLResolveInfo,
@@ -220,9 +217,7 @@ describe('PostLoader', () => {
       const tagIds = [1, 2];
       const servicePosts: Post[] = [];
 
-      jest
-        .spyOn(postService, 'findAllByTagIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByTagIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByTagIds.loadMany(tagIds);
 
@@ -232,7 +227,7 @@ describe('PostLoader', () => {
     it('should handle empty tag ids array', async () => {
       const tagIds: number[] = [];
 
-      jest.spyOn(postService, 'findAllByTagIds').mockResolvedValue([]);
+      vi.spyOn(postService, 'findAllByTagIds').mockResolvedValue([]);
 
       const result = await loader.findPostsByTagIds.loadMany(tagIds);
 
@@ -244,19 +239,19 @@ describe('PostLoader', () => {
 
     it('should group posts correctly by tag id', async () => {
       const tagIds = [1, 2];
-      const user1 = { ...mockUser, id: 1 };
-      const user2 = { ...mockUser, id: 2 };
-      const post1 = { ...mockPost, id: 1, user: Promise.resolve(user1) };
-      const post2 = { ...mockPost2, id: 2, user: Promise.resolve(user2) };
+      const post1 = { ...mockPost, id: 1, tags: [{ id: 1 } as Tag] };
+      const post2 = {
+        ...mockPost2,
+        id: 2,
+        tags: [{ id: 1 } as Tag, { id: 2 } as Tag],
+      };
       const servicePosts = [post1, post2];
 
-      jest
-        .spyOn(postService, 'findAllByTagIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByTagIds').mockResolvedValue(servicePosts);
 
       const result = await loader.findPostsByTagIds.loadMany(tagIds);
 
-      expect(result).toEqual([[post1], [post2]]);
+      expect(result).toEqual([[post1, post2], [post2]]);
     });
   });
 
@@ -265,7 +260,7 @@ describe('PostLoader', () => {
       const postIds = [1];
       const expectedPosts = [mockPost];
 
-      jest.spyOn(postService, 'findAllByIds').mockResolvedValue(expectedPosts);
+      vi.spyOn(postService, 'findAllByIds').mockResolvedValue(expectedPosts);
 
       // First call
       const result1 = await loader.findPostsByPostId.loadMany(postIds);
@@ -281,9 +276,7 @@ describe('PostLoader', () => {
       const userIds = [1];
       const servicePosts = [mockPost];
 
-      jest
-        .spyOn(postService, 'findAllByUserIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByUserIds').mockResolvedValue(servicePosts);
 
       // First call
       const result1 = await loader.findPostsByUserIds.loadMany(userIds);
@@ -299,9 +292,7 @@ describe('PostLoader', () => {
       const tagIds = [1];
       const servicePosts = [mockPost];
 
-      jest
-        .spyOn(postService, 'findAllByTagIds')
-        .mockResolvedValue(servicePosts);
+      vi.spyOn(postService, 'findAllByTagIds').mockResolvedValue(servicePosts);
 
       // First call
       const result1 = await loader.findPostsByTagIds.loadMany(tagIds);

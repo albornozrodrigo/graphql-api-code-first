@@ -2,13 +2,14 @@ import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Info,
+  Int,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { GraphQLResolveInfo } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql';
 import { CurrentUser } from '../auth/auth.decorator';
 import { GqlAuthGuard } from '../auth/guards/auth.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
@@ -35,7 +36,10 @@ export class ProfileResolver {
   }
 
   @Query(() => Profile, { name: 'profile' })
-  findOne(@Args('id') id: number, @Info() info: GraphQLResolveInfo) {
+  findOne(
+    @Args('id', { type: () => Int }) id: number,
+    @Info() info: GraphQLResolveInfo,
+  ) {
     return this.profileService.findOne(id, info);
   }
 
@@ -60,7 +64,7 @@ export class ProfileResolver {
   @Mutation(() => Profile, { name: 'updateProfile' })
   updateProfile(
     @CurrentUser() user: User,
-    @Args('id') id: number,
+    @Args('id', { type: () => Int }) id: number,
     @Args('updateProfileInput') updateProfileInput: UpdateProfileInput,
   ) {
     return this.profileService.update(id, user.id, updateProfileInput);

@@ -11,6 +11,7 @@ import { CreateProfileInput } from '../dto/create-profile.input';
 import { UpdateProfileInput } from '../dto/update-profile.input';
 import { ProfileResolver } from '../profile.resolver';
 import { ProfileService } from '../profile.service';
+import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 
 describe('ProfileResolver', () => {
   let resolver: ProfileResolver;
@@ -24,20 +25,20 @@ describe('ProfileResolver', () => {
         {
           provide: ProfileService,
           useValue: {
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            findOneByUserId: jest.fn(),
-            create: jest.fn(),
-            update: jest.fn(),
-            remove: jest.fn(),
+            findAll: vi.fn(),
+            findOne: vi.fn(),
+            findOneByUserId: vi.fn(),
+            create: vi.fn(),
+            update: vi.fn(),
+            remove: vi.fn(),
           },
         },
         {
           provide: UserLoader,
           useValue: {
-            setInfo: jest.fn().mockReturnThis(),
+            setInfo: vi.fn().mockReturnThis(),
             findUsersByUserId: {
-              load: jest.fn(),
+              load: vi.fn(),
             },
           },
         },
@@ -56,7 +57,7 @@ describe('ProfileResolver', () => {
   describe('allProfiles', () => {
     it('should return an array of profiles', async () => {
       const profiles = [mockProfile, mockProfile];
-      (service.findAll as jest.Mock).mockResolvedValue(profiles);
+      (service.findAll as Mock).mockResolvedValue(profiles);
 
       const result = await resolver.findAll(mockInfo, mockPagination);
       expect(result).toEqual(profiles);
@@ -66,7 +67,7 @@ describe('ProfileResolver', () => {
 
   describe('profile', () => {
     it('should return a single profile', async () => {
-      (service.findOne as jest.Mock).mockResolvedValue(mockProfile);
+      (service.findOne as Mock).mockResolvedValue(mockProfile);
 
       const result = await resolver.findOne(mockProfile.id, mockInfo);
       expect(result).toEqual(mockProfile);
@@ -76,7 +77,7 @@ describe('ProfileResolver', () => {
 
   describe('profileByUserId', () => {
     it('should return a single profile by user id', async () => {
-      (service.findOneByUserId as jest.Mock).mockResolvedValue(mockProfile);
+      (service.findOneByUserId as Mock).mockResolvedValue(mockProfile);
 
       const result = await resolver.findOneByUserId(mockUser, mockInfo);
       expect(result).toEqual(mockProfile);
@@ -93,7 +94,7 @@ describe('ProfileResolver', () => {
         bio: 'test bio',
         avatar: 'test avatar',
       };
-      (service.create as jest.Mock).mockResolvedValue(mockProfile);
+      (service.create as Mock).mockResolvedValue(mockProfile);
 
       const result = await resolver.create(mockUser, createProfileInput);
       expect(result).toEqual(mockProfile);
@@ -109,7 +110,7 @@ describe('ProfileResolver', () => {
       const updateProfileInput: UpdateProfileInput = {
         bio: 'new bio',
       };
-      (service.update as jest.Mock).mockResolvedValue(mockProfile);
+      (service.update as Mock).mockResolvedValue(mockProfile);
 
       const result = await resolver.updateProfile(
         mockUser,
@@ -127,7 +128,7 @@ describe('ProfileResolver', () => {
 
   describe('removeProfile', () => {
     it('should remove a profile', async () => {
-      (service.remove as jest.Mock).mockResolvedValue(true);
+      (service.remove as Mock).mockResolvedValue(true);
 
       const result = await resolver.removeProfile(mockUser);
       expect(result).toEqual(true);
@@ -137,9 +138,7 @@ describe('ProfileResolver', () => {
 
   describe('user', () => {
     it('should return the user for a profile', async () => {
-      (userLoader.findUsersByUserId.load as jest.Mock).mockResolvedValue(
-        mockUser,
-      );
+      (userLoader.findUsersByUserId.load as Mock).mockResolvedValue(mockUser);
 
       const result = await resolver.user(mockProfile, mockInfo);
       expect(result).toEqual(mockUser);

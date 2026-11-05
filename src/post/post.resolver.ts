@@ -2,13 +2,14 @@ import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Info,
+  Int,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { GraphQLResolveInfo } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql';
 import { CurrentUser } from '../auth/auth.decorator';
 import { GqlAuthGuard } from '../auth/guards/auth.guard';
 import { PaginationInput } from '../common/dto/pagination.input';
@@ -37,7 +38,10 @@ export class PostResolver {
   }
 
   @Query(() => Post, { name: 'post' })
-  findOne(@Args('id') id: number, @Info() info: GraphQLResolveInfo) {
+  findOne(
+    @Args('id', { type: () => Int }) id: number,
+    @Info() info: GraphQLResolveInfo,
+  ) {
     return this.postService.findOne(id, info);
   }
 
@@ -66,7 +70,7 @@ export class PostResolver {
   @Mutation(() => Post, { name: 'updatePost' })
   update(
     @CurrentUser() user: User,
-    @Args('id') id: number,
+    @Args('id', { type: () => Int }) id: number,
     @Args('updatePostInput') updatePostInput: UpdatePostInput,
   ) {
     return this.postService.update(id, user.id, updatePostInput);
@@ -74,7 +78,10 @@ export class PostResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Boolean, { name: 'removePost' })
-  remove(@CurrentUser() user: User, @Args('id') id: number) {
+  remove(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => Int }) id: number,
+  ) {
     return this.postService.remove(id, user.id);
   }
 

@@ -6,6 +6,7 @@ import { mockPost, mockTag, mockTags } from '../../__mock__';
 import { Tag } from '../entities/tag.entity';
 import { TagLoader } from '../tag.loader';
 import { TagService } from '../tag.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('TagLoader', () => {
   let loader: TagLoader;
@@ -20,8 +21,8 @@ describe('TagLoader', () => {
         {
           provide: TagService,
           useValue: {
-            findAllByIds: jest.fn(),
-            findAllByPostIds: jest.fn(),
+            findAllByIds: vi.fn(),
+            findAllByPostIds: vi.fn(),
           },
         },
       ],
@@ -51,7 +52,7 @@ describe('TagLoader', () => {
       const tagIds = [1, 2];
       const expectedTags = mockTags(2);
 
-      jest.spyOn(tagService, 'findAllByIds').mockResolvedValue(expectedTags);
+      vi.spyOn(tagService, 'findAllByIds').mockResolvedValue(expectedTags);
 
       const result = await loader.findTagsByTagId.loadMany(tagIds);
 
@@ -66,7 +67,7 @@ describe('TagLoader', () => {
       const tagIds = [2, 1];
       const serviceTags = mockTags(2).reverse();
 
-      jest.spyOn(tagService, 'findAllByIds').mockResolvedValue(serviceTags);
+      vi.spyOn(tagService, 'findAllByIds').mockResolvedValue(serviceTags);
 
       const result = await loader.findTagsByTagId.loadMany(tagIds);
 
@@ -77,7 +78,7 @@ describe('TagLoader', () => {
       const tagIds = [1, 999];
       const serviceTags = [mockTag];
 
-      jest.spyOn(tagService, 'findAllByIds').mockResolvedValue(serviceTags);
+      vi.spyOn(tagService, 'findAllByIds').mockResolvedValue(serviceTags);
 
       const result = await loader.findTagsByTagId.loadMany(tagIds);
 
@@ -92,7 +93,7 @@ describe('TagLoader', () => {
     it('should handle empty tag ids array', async () => {
       const tagIds: number[] = [];
 
-      jest.spyOn(tagService, 'findAllByIds').mockResolvedValue([]);
+      vi.spyOn(tagService, 'findAllByIds').mockResolvedValue([]);
 
       const result = await loader.findTagsByTagId.loadMany(tagIds);
 
@@ -108,7 +109,7 @@ describe('TagLoader', () => {
       const postIds = [1, 2];
       const serviceTags = mockTags(2);
 
-      jest.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
+      vi.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
 
       const result = await loader.findTagsByPostIds.loadMany(postIds);
 
@@ -123,7 +124,7 @@ describe('TagLoader', () => {
       const postIds = [1, 2];
       const serviceTags: Tag[] = [];
 
-      jest.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
+      vi.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
 
       const result = await loader.findTagsByPostIds.loadMany(postIds);
 
@@ -133,7 +134,7 @@ describe('TagLoader', () => {
     it('should handle empty post ids array', async () => {
       const postIds: number[] = [];
 
-      jest.spyOn(tagService, 'findAllByPostIds').mockResolvedValue([]);
+      vi.spyOn(tagService, 'findAllByPostIds').mockResolvedValue([]);
 
       const result = await loader.findTagsByPostIds.loadMany(postIds);
 
@@ -151,7 +152,7 @@ describe('TagLoader', () => {
       const tag2 = { ...mockTag, id: 2, posts: Promise.resolve([post2]) };
       const serviceTags = [tag1, tag2];
 
-      jest.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
+      vi.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
 
       const result = await loader.findTagsByPostIds.loadMany(postIds);
 
@@ -164,7 +165,7 @@ describe('TagLoader', () => {
       const tagIds = [1];
       const expectedTags = [mockTag];
 
-      jest.spyOn(tagService, 'findAllByIds').mockResolvedValue(expectedTags);
+      vi.spyOn(tagService, 'findAllByIds').mockResolvedValue(expectedTags);
 
       // First call
       const result1 = await loader.findTagsByTagId.loadMany(tagIds);
@@ -180,7 +181,7 @@ describe('TagLoader', () => {
       const postIds = [1];
       const serviceTags = [mockTag];
 
-      jest.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
+      vi.spyOn(tagService, 'findAllByPostIds').mockResolvedValue(serviceTags);
 
       // First call
       const result1 = await loader.findTagsByPostIds.loadMany(postIds);

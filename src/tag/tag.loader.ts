@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Injectable, Scope } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { GraphQLResolveInfo } from 'graphql';
@@ -50,16 +49,13 @@ export class TagLoader {
       postIds.forEach((id) => tagsMap.set(id, []));
 
       // Agrupar tags por postId
-      tags.forEach(async (tag) => {
+      for (const tag of tags) {
         // Para cada tag, verificar em quais posts ela está associada
         const tagPosts = await tag.posts;
-        tagPosts.forEach((post) => {
-          const list = tagsMap.get(post.id);
-          if (list) {
-            list.push(tag);
-          }
-        });
-      });
+        for (const post of tagPosts) {
+          tagsMap.get(post.id)?.push(tag);
+        }
+      }
 
       // Retornar na mesma ordem dos postIds
       return postIds.map((id) => tagsMap.get(id) || []);

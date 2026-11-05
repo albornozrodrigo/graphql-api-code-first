@@ -12,10 +12,11 @@ import { UpdateUserPasswordInput } from '../dto/update-user-password.input';
 import { UpdateUserInput } from '../dto/update-user.input';
 import { User } from '../entities/user.entity';
 import { UserService } from '../user.service';
+import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 
-jest.mock('../../app.utils', () => ({
-  getAttributes: jest.fn(() => ['id', 'name', 'email']),
-  buildPagination: jest.fn((pagination: { page: number; limit: number }) => ({
+vi.mock('../../app.utils', () => ({
+  getAttributes: vi.fn(() => ['id', 'name', 'email']),
+  buildPagination: vi.fn((pagination: { page: number; limit: number }) => ({
     skip: (pagination.page - 1) * pagination.limit,
     take: pagination.limit,
   })),
@@ -24,14 +25,14 @@ jest.mock('../../app.utils', () => ({
 describe('UserService', () => {
   let service: UserService;
   let userRepository: {
-    count: jest.Mock;
-    create: jest.Mock;
-    save: jest.Mock;
-    find: jest.Mock;
-    findOne: jest.Mock;
-    findOneByOrFail: jest.Mock;
-    update: jest.Mock;
-    delete: jest.Mock;
+    count: Mock;
+    create: Mock;
+    save: Mock;
+    find: Mock;
+    findOne: Mock;
+    findOneByOrFail: Mock;
+    update: Mock;
+    delete: Mock;
   };
 
   const mockCreateUserInput: CreateUserInput = {
@@ -63,14 +64,14 @@ describe('UserService', () => {
         {
           provide: getRepositoryToken(User),
           useValue: {
-            count: jest.fn(),
-            create: jest.fn(),
-            save: jest.fn(),
-            find: jest.fn(),
-            findOne: jest.fn(),
-            findOneByOrFail: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn(),
+            count: vi.fn(),
+            create: vi.fn(),
+            save: vi.fn(),
+            find: vi.fn(),
+            findOne: vi.fn(),
+            findOneByOrFail: vi.fn(),
+            update: vi.fn(),
+            delete: vi.fn(),
           },
         },
       ],
@@ -87,7 +88,8 @@ describe('UserService', () => {
   describe('create', () => {
     it('should create a new user', async () => {
       userRepository.count.mockResolvedValue(0);
-      userRepository.create.mockResolvedValue(mockUser);
+      userRepository.create.mockReturnValue(mockUser);
+      userRepository.save.mockResolvedValue(mockUser);
 
       const result = await service.create(mockCreateUserInput);
 
@@ -104,6 +106,7 @@ describe('UserService', () => {
         }),
       );
 
+      expect(userRepository.save).toHaveBeenCalledWith(mockUser);
       expect(result).toEqual(mockUser);
     });
 
@@ -257,11 +260,10 @@ describe('UserService', () => {
         mockUpdateUserPasswordInput,
       );
 
-      expect(userRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          password: expect.any(String),
-        }),
-      );
+      const saved = userRepository.save.mock.calls[0][0] as User;
+      // Deve salvar o hash, nunca a senha em texto puro
+      expect(saved.password).not.toBe(mockUpdateUserPasswordInput.password);
+      expect(saved.password).toMatch(/^\$2[aby]\$/);
 
       expect(result).toBe(true);
     });

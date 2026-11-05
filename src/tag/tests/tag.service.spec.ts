@@ -9,6 +9,7 @@ import { CreateTagInput } from '../dto/create-tag.input';
 import { UpdateTagInput } from '../dto/update-tag.input';
 import { Tag } from '../entities/tag.entity';
 import { TagService } from '../tag.service';
+import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 
 describe('TagService', () => {
   let service: TagService;
@@ -34,28 +35,29 @@ describe('TagService', () => {
   const mockGraphQLResolveInfo = {} as GraphQLResolveInfo;
 
   const mockRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    find: jest.fn(),
-    findOne: jest.fn(),
-    count: jest.fn(),
-    delete: jest.fn(),
-    createQueryBuilder: jest.fn(),
+    create: vi.fn(),
+    save: vi.fn(),
+    find: vi.fn(),
+    findOne: vi.fn(),
+    count: vi.fn(),
+    delete: vi.fn(),
+    createQueryBuilder: vi.fn(),
   };
 
   const mockQueryBuilder = {
-    select: jest.fn().mockReturnThis(),
-    innerJoin: jest.fn().mockReturnThis(),
-    addSelect: jest.fn().mockReturnThis(),
-    getMany: jest.fn(),
+    select: vi.fn().mockReturnThis(),
+    innerJoin: vi.fn().mockReturnThis(),
+    addSelect: vi.fn().mockReturnThis(),
+    getMany: vi.fn(),
   };
 
   beforeEach(async () => {
     // Mock the getAttributes function
-    jest.spyOn(appUtils, 'getAttributes').mockReturnValue({});
-    jest
-      .spyOn(appUtils, 'buildPagination')
-      .mockReturnValue({ limit: 10, offset: 0 });
+    vi.spyOn(appUtils, 'getAttributes').mockReturnValue({});
+    vi.spyOn(appUtils, 'buildPagination').mockReturnValue({
+      limit: 10,
+      offset: 0,
+    });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -72,7 +74,7 @@ describe('TagService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -185,7 +187,7 @@ describe('TagService', () => {
         'post.id IN (:...postIds)',
         { postIds },
       );
-      expect(mockQueryBuilder.addSelect).toHaveBeenCalledWith('tag.id');
+      expect(mockQueryBuilder.addSelect).toHaveBeenCalledWith('post.id');
       expect(mockQueryBuilder.getMany).toHaveBeenCalled();
     });
   });

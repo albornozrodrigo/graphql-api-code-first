@@ -13,7 +13,7 @@ A API utiliza um banco de dados **PostgreSQL** gerenciado pela ORM **TypeORM**, 
 - **Banco de Dados**: PostgreSQL
 - **ORM**: TypeORM
 - **Autenticação**: JWT (JSON Web Tokens)
-- **Testes**: Jest para testes unitários
+- **Testes**: Vitest para testes unitários
 - **Linguagem**: TypeScript
 
 ## Arquitetura e Conceitos Chave
@@ -64,7 +64,7 @@ A segurança das rotas que exigem autenticação é garantida por meio de JSON W
 
 ### 6. Testes Unitários
 
-O projeto possui uma suíte de testes unitários construída com **Jest**. Os testes focam em isolar e validar a lógica de negócio nos serviços e a correta implementação dos `DataLoaders`, utilizando mocks para simular dependências como serviços e o banco de dados. Isso garante que novas alterações não quebrem a funcionalidade existente.
+O projeto possui uma suíte de testes unitários construída com **Vitest**. Os testes focam em isolar e validar a lógica de negócio nos serviços e a correta implementação dos `DataLoaders`, utilizando mocks para simular dependências como serviços e o banco de dados. Isso garante que novas alterações não quebrem a funcionalidade existente.
 
 ## Como Executar
 

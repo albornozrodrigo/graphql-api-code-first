@@ -5,13 +5,14 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '../../enums/role.enum';
 import { UserService } from '../../user/user.service';
 import { AuthService } from '../auth.service';
+import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 
-jest.mock('bcrypt', () => ({
-  hash: jest.fn((plain: string) => `hashed:${plain}`),
-  compare: jest.fn(
+vi.mock('bcrypt', () => ({
+  hash: vi.fn((plain: string) => `hashed:${plain}`),
+  compare: vi.fn(
     (plain: string, hashed: string) => hashed === `hashed:${plain}`,
   ),
-  genSalt: jest.fn(() => 'salt'),
+  genSalt: vi.fn(() => 'salt'),
 }));
 
 describe('AuthService', () => {
@@ -26,13 +27,13 @@ describe('AuthService', () => {
         {
           provide: UserService,
           useValue: {
-            findOneByEmail: jest.fn(() => ({
+            findOneByEmail: vi.fn(() => ({
               id: 1,
               name: 'Test User',
               email: 'test@example.com',
               password: 'password',
             })),
-            findOneById: jest.fn(() => ({
+            findOneById: vi.fn(() => ({
               id: 1,
               name: 'Test User',
               email: 'test@example.com',
@@ -43,7 +44,7 @@ describe('AuthService', () => {
         {
           provide: JwtService,
           useValue: {
-            sign: jest.fn(() => 'token'), // Mock the sign method
+            sign: vi.fn(() => 'token'), // Mock the sign method
           },
         },
       ],
@@ -55,7 +56,7 @@ describe('AuthService', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks(); // Limpar mocks após cada teste
+    vi.restoreAllMocks(); // Limpar mocks após cada teste
   });
 
   it('should be defined', () => {
@@ -65,7 +66,7 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should return user object if password is valid', async () => {
-      jest.spyOn(userService, 'findOneByEmail').mockResolvedValue({
+      vi.spyOn(userService, 'findOneByEmail').mockResolvedValue({
         id: 1,
         name: 'Test User',
         email: 'test@example.com',
@@ -76,7 +77,7 @@ describe('AuthService', () => {
         posts: Promise.resolve([]),
       });
 
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      (bcrypt.compare as Mock).mockResolvedValue(true);
 
       const result = await authService.validateUser(
         'test@example.com',
@@ -101,7 +102,7 @@ describe('AuthService', () => {
     });
 
     it('should throw an error if password is invalid', async () => {
-      jest.spyOn(userService, 'findOneByEmail').mockResolvedValue({
+      vi.spyOn(userService, 'findOneByEmail').mockResolvedValue({
         id: 1,
         name: 'Test User',
         email: 'test@example.com',
@@ -112,7 +113,7 @@ describe('AuthService', () => {
         posts: Promise.resolve([]),
       });
 
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      (bcrypt.compare as Mock).mockResolvedValue(false);
 
       await expect(
         authService.validateUser('test@example.com', 'wrongPassword'),
@@ -124,13 +125,13 @@ describe('AuthService', () => {
     });
 
     it('should throw an error if user is not found', async () => {
-      jest
-        .spyOn(userService, 'findOneByEmail')
-        .mockRejectedValue(new Error('User not found'));
+      vi.spyOn(userService, 'findOneByEmail').mockRejectedValue(
+        new Error('User not found'),
+      );
 
       await expect(
         authService.validateUser('invalid@example.com', 'password123'),
-      ).rejects.toThrow('User not found');
+      ).rejects.toThrow('Invalid credentials');
 
       expect(userService.findOneByEmail).toHaveBeenCalledWith(
         'invalid@example.com',
@@ -148,7 +149,7 @@ describe('AuthService', () => {
       };
       const expectedToken = 'token';
 
-      jest.spyOn(jwtService, 'sign').mockReturnValue(expectedToken);
+      vi.spyOn(jwtService, 'sign').mockReturnValue(expectedToken);
 
       const result = authService.login(user);
 

@@ -4,6 +4,7 @@ import { mockInfo, mockProfiles, mockUser } from '../../__mock__';
 import { Profile } from '../entities/profile.entity';
 import { ProfileLoader } from '../profile.loader';
 import { ProfileService } from '../profile.service';
+import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
 
 describe('ProfileLoader', () => {
   let loader: ProfileLoader;
@@ -16,7 +17,7 @@ describe('ProfileLoader', () => {
         {
           provide: ProfileService,
           useValue: {
-            findAllByUserIds: jest.fn(),
+            findAllByUserIds: vi.fn(),
           },
         },
       ],
@@ -35,7 +36,7 @@ describe('ProfileLoader', () => {
       const usersIds = [mockUser.id, mockUser.id + 1];
       const profiles: Profile[] = mockProfiles(usersIds.length);
 
-      (service.findAllByUserIds as jest.Mock).mockResolvedValue(profiles);
+      (service.findAllByUserIds as Mock).mockResolvedValue(profiles);
 
       const result = await loader
         .setInfo(mockInfo)
@@ -48,7 +49,7 @@ describe('ProfileLoader', () => {
     it('should return two errors if no profiles are found', async () => {
       const userIds = [1, 2];
 
-      (service.findAllByUserIds as jest.Mock).mockResolvedValue([]);
+      (service.findAllByUserIds as Mock).mockResolvedValue([]);
 
       const result = await loader
         .setInfo(mockInfo)

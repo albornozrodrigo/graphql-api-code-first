@@ -12,12 +12,13 @@ import { UpdateUserInput } from '../dto/update-user.input';
 import { User } from '../entities/user.entity';
 import { UserResolver } from '../user.resolver';
 import { UserService } from '../user.service';
+import { describe, it, expect, beforeEach, vi, Mocked, Mock } from 'vitest';
 
 describe('UserResolver', () => {
   let resolver: UserResolver;
-  let userService: jest.Mocked<UserService>;
-  let postLoader: jest.Mocked<PostLoader>;
-  let profileLoader: jest.Mocked<ProfileLoader>;
+  let userService: Mocked<UserService>;
+  let postLoader: Mocked<PostLoader>;
+  let profileLoader: Mocked<ProfileLoader>;
 
   const mockCreateUserInput: CreateUserInput = {
     name: 'Rodrigo Albornoz',
@@ -47,35 +48,35 @@ describe('UserResolver', () => {
         {
           provide: UserService,
           useValue: {
-            create: jest.fn(),
-            findAll: jest.fn(),
-            findOne: jest.fn(),
-            update: jest.fn(),
-            updatePassword: jest.fn(),
-            remove: jest.fn(),
+            create: vi.fn(),
+            findAll: vi.fn(),
+            findOne: vi.fn(),
+            update: vi.fn(),
+            updatePassword: vi.fn(),
+            remove: vi.fn(),
           },
         },
         {
           provide: PostLoader,
           useValue: {
-            setInfo: jest.fn(),
+            setInfo: vi.fn(),
             findPostsByPostId: {
-              load: jest.fn(),
+              load: vi.fn(),
             },
             findPostsByUserIds: {
-              load: jest.fn(),
+              load: vi.fn(),
             },
             findPostsByTagIds: {
-              load: jest.fn(),
+              load: vi.fn(),
             },
           },
         },
         {
           provide: ProfileLoader,
           useValue: {
-            setInfo: jest.fn(),
+            setInfo: vi.fn(),
             findProfilesByUserIds: {
-              load: jest.fn(),
+              load: vi.fn(),
             },
           },
         },
@@ -278,7 +279,7 @@ describe('UserResolver', () => {
 
       beforeEach(() => {
         postLoader.setInfo.mockReturnValue(postLoader);
-        (postLoader.findPostsByUserIds.load as jest.Mock).mockResolvedValue(
+        (postLoader.findPostsByUserIds.load as Mock).mockResolvedValue(
           mockPosts,
         );
       });
@@ -320,9 +321,7 @@ describe('UserResolver', () => {
 
       it('should throw an error if loader fails', async () => {
         const error = new Error('Posts not found');
-        (postLoader.findPostsByUserIds.load as jest.Mock).mockRejectedValue(
-          error,
-        );
+        (postLoader.findPostsByUserIds.load as Mock).mockRejectedValue(error);
 
         await expect(
           resolver.posts(mockUserEntity, mockGraphQLResolveInfo),
@@ -347,9 +346,9 @@ describe('UserResolver', () => {
 
       beforeEach(() => {
         profileLoader.setInfo.mockReturnValue(profileLoader);
-        (
-          profileLoader.findProfilesByUserIds.load as jest.Mock
-        ).mockResolvedValue(mockProfile);
+        (profileLoader.findProfilesByUserIds.load as Mock).mockResolvedValue(
+          mockProfile,
+        );
       });
 
       it('should return profile', async () => {
@@ -391,9 +390,9 @@ describe('UserResolver', () => {
 
       it('should throw an error if loader fails', async () => {
         const error = new Error('Profile not found');
-        (
-          profileLoader.findProfilesByUserIds.load as jest.Mock
-        ).mockRejectedValue(error);
+        (profileLoader.findProfilesByUserIds.load as Mock).mockRejectedValue(
+          error,
+        );
 
         await expect(
           resolver.profile(mockUserEntity, mockGraphQLResolveInfo),

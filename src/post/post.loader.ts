@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Injectable, Scope } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { GraphQLResolveInfo } from 'graphql';
@@ -53,12 +52,12 @@ export class PostLoader {
       userIds.forEach((id) => postsMap.set(id, []));
 
       // Agrupar posts por authorId
-      posts.forEach(async (post) => {
+      for (const post of posts) {
         const list = postsMap.get((await post.user).id);
         if (list) {
           list.push(post);
         }
-      });
+      }
 
       // Retornar na mesma ordem dos userIds
       return userIds.map((id) => postsMap.get(id) || []);
@@ -73,21 +72,20 @@ export class PostLoader {
         this.info,
       );
 
-      // Criar um mapa agrupando posts por authorId
+      // Criar um mapa agrupando posts por tagId
       const postsMap = new Map<number, Post[]>();
 
-      // Inicializar com arrays vazios para cada userId
+      // Inicializar com arrays vazios para cada tagId
       tagIds.forEach((id) => postsMap.set(id, []));
 
-      // Agrupar posts por authorId
-      posts.forEach(async (post) => {
-        const list = postsMap.get((await post.user).id);
-        if (list) {
-          list.push(post);
+      // Agrupar posts por tagId
+      for (const post of posts) {
+        for (const tag of post.tags ?? []) {
+          postsMap.get(tag.id)?.push(post);
         }
-      });
+      }
 
-      // Retornar na mesma ordem dos userIds
+      // Retornar na mesma ordem dos tagIds
       return tagIds.map((id) => postsMap.get(id) || []);
     },
   );

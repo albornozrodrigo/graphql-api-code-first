@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
@@ -9,10 +8,11 @@ import { Profile } from './profile/entities/profile.entity';
 import { Tag } from './tag/entities/tag.entity';
 import { User } from './user/entities/user.entity';
 
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 100;
+
 export const buildPagination = (pagination: PaginationInput | undefined) => {
-  if (!pagination || !pagination.limit || !pagination.page)
-    return { limit: 10, offset: 0 };
-  const limit = pagination?.limit || 10;
+  const limit = Math.min(pagination?.limit || DEFAULT_LIMIT, MAX_LIMIT);
   const page = pagination?.page || 1;
   const offset = (page - 1) * limit;
   return { offset, limit };
@@ -38,9 +38,8 @@ export const getAttributes = (
   //   }
   // }
 
-  if (!fields.id) {
-    fields.id = true;
-  }
+  // O id é sempre necessário para os DataLoaders agruparem os resultados
+  attributes['id'] = true;
 
   return attributes;
 };

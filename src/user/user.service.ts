@@ -36,7 +36,9 @@ export class UserService {
       createUserInput.password,
     );
 
-    return this.userRepository.create(createUserInput);
+    const newUser = this.userRepository.create(createUserInput);
+
+    return await this.userRepository.save(newUser);
   }
 
   async findAll(
@@ -162,8 +164,6 @@ export class UserService {
     user.password = await this.handleHashPassword(
       updateUserPasswordInput.password,
     );
-
-    Object.assign(user, updateUserPasswordInput);
 
     await this.userRepository.save(user);
 

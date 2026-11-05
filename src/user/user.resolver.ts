@@ -2,13 +2,14 @@ import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Info,
+  Int,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { GraphQLResolveInfo } from 'graphql';
+import type { GraphQLResolveInfo } from 'graphql';
 import { CurrentUser, Roles } from '../auth/auth.decorator';
 import { GqlAuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -45,7 +46,10 @@ export class UserResolver {
   }
 
   @Query(() => User, { name: 'user' })
-  findOne(@Args('id') id: number, @Info() info: GraphQLResolveInfo) {
+  findOne(
+    @Args('id', { type: () => Int }) id: number,
+    @Info() info: GraphQLResolveInfo,
+  ) {
     return this.userService.findOne(id, info);
   }
 

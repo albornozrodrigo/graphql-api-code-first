@@ -70,17 +70,17 @@ type AuthResponse {
 
 type Query {
   allUsers(pagination: PaginationInput): [User!]!
-  user(id: Float!): User!
+  user(id: Int!): User!
   me: User!
   allPosts(pagination: PaginationInput): [Post!]!
-  post(id: Float!): Post!
+  post(id: Int!): Post!
   allPostsByUser(pagination: PaginationInput): [Post!]!
   allProfiles(pagination: PaginationInput): [Profile!]!
-  profile(id: Float!): Profile!
+  profile(id: Int!): Profile!
   profileByUserId: Profile!
   allTags(pagination: PaginationInput): [Tag!]!
-  tag(id: Float!): Tag!
-  allTagsByPostId(postId: Float!, pagination: PaginationInput): [Tag!]!
+  tag(id: Int!): Tag!
+  allTagsByPostId(postId: Int!, pagination: PaginationInput): [Tag!]!
 }
 
 input PaginationInput {
@@ -95,14 +95,14 @@ type Mutation {
   updateUserPassword(updateUserPasswordInput: UpdateUserPasswordInput!): Boolean!
   removeUser: Boolean!
   createPost(createPostInput: CreatePostInput!): Post!
-  updatePost(id: Float!, updatePostInput: UpdatePostInput!): Post!
-  removePost(id: Float!): Boolean!
+  updatePost(id: Int!, updatePostInput: UpdatePostInput!): Post!
+  removePost(id: Int!): Boolean!
   createProfile(createProfileInput: CreateProfileInput!): Profile!
-  updateProfile(id: Float!, updateProfileInput: UpdateProfileInput!): Profile!
+  updateProfile(id: Int!, updateProfileInput: UpdateProfileInput!): Profile!
   removeProfile: Boolean!
   createTag(createTagInput: CreateTagInput!): Tag!
-  updateTag(id: Float!, updateTagInput: UpdateTagInput!): Tag!
-  removeTag(id: Float!): Boolean!
+  updateTag(id: Int!, updateTagInput: UpdateTagInput!): Tag!
+  removeTag(id: Int!): Boolean!
 }
 
 input AuthInput {
